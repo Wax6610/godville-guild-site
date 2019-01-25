@@ -12,11 +12,11 @@
 
 namespace App{
 /**
- * App\GuildMembers
+ * App\GuildMember
  *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\GuildMembers newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\GuildMembers newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\App\GuildMembers query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\GuildMember newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\GuildMember newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\GuildMember query()
  * @mixin \Eloquent
  */
 	class GuildMembers extends \Eloquent {}

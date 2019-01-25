@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\GuildMembers;
+use App\GuildMember;
 use App\Guilds;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Input;
 
 class GuildMembersController extends Controller
 {
-    protected $guild_name = 'Драконы Годвилля';
 
     public function index()
     {
@@ -53,8 +53,9 @@ class GuildMembersController extends Controller
     /*Ищем список согильдийцев на сохраненной странице*/
     public function parse(Request $request)
     {
-        $added = [];
+
         if ($request->hasFile('file')) {
+            $added = [];
             $file = Input::file('file');
             $page = file_get_contents($file->path());
 
@@ -62,13 +63,13 @@ class GuildMembersController extends Controller
             preg_match_all("/<h1>(.+?)<\/h1>/", $page, $guild_name);
 
 
-            if($guild_name[1][0] !== $this->guild_name){
+            if($guild_name[1][0] !== env("GUILD_NAME")){
                 flash('Данная гильдия нам не интересна, дайте другую')->error();
                 return view('guild-members.parse');
             }
             foreach ($god_names[2] as $god){
-                if( GuildMembers::where('name',$god)->first() === null){
-                    GuildMembers::create(['name' => $god]);
+                if( GuildMember::where('name',$god)->first() === null){
+                    GuildMember::create(['name' => $god]);
                     $added[] = $god;
                 }
             }

@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\GuildMember;
 use App\GuildMembers;
 use App\UserStats;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Services\UserStatsService;
+use Illuminate\Support\Facades\Log;
 
 /**
  * @property UserStatsService service
@@ -32,24 +34,22 @@ class UserStatsController extends Controller
 
     public function getSnapshot()
     {
-        $users = GuildMembers::all();
+        $users = GuildMember::doesntHave('todayStats')->get();
 
         foreach ($users as $user) {
+            try {
+                $user_stats = $this->service->getFromApi($user->name);
 
-            $user_stats = $this->service->getFromApi($user->name);
-
-            if ($user_stats->clan !== $this->guild_name) {
-                $user->delete();
-            } else {
-
-                $this->service->save($user->id, $user_stats);
-
-                echo "{$user->id} - {$user->name}</br>";
-                sleep(30);
+                if ($user_stats->clan !== env("GUILD_NAME")) {
+                    $user->delete();
+                } else {
+                    $this->service->save($user->id, $user_stats);
+                }
+            } catch (\Exception $e) {
+                Log::error("getSnapshotError: {$e->getMessage()}");
             }
-
+            sleep(60);
         }
+
     }
-
-
 }

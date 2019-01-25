@@ -8,13 +8,8 @@
                 <div class="card">
                     <div class="card-header">Добавление пользователей через страницу гильдии</div>
 
-                    <?php if (!empty($added)): ?>
-                    Добавлены пользователи:
-                    <ul class="alert-success">
-                        <?php foreach ($added as $username):?>
-                        <li><?=$username?></li>
-                        <?php endforeach; ?>
-                    </ul>
+                    <?php if (isset($added)): ?>
+                    Богов добавлено: <?=count($added)?>
                     <?php endif; ?>
 
                     <div class="card-body">
