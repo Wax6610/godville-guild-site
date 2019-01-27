@@ -30,6 +30,7 @@ class UserStatsService
 
         return UserStats::create([
             'guild_member_id' => $user_id,
+            'level' => $stats->level,
             'bricks_cnt' => $stats->bricks_cnt + rand(1,100),
             'wood_cnt' => $stats->wood_cnt  + rand(1,100),
             'ark_f' => $stats->ark_f  + rand(1,100),

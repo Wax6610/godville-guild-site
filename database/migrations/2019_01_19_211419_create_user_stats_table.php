@@ -17,6 +17,7 @@ class CreateUserStatsTable extends Migration
         Schema::create('user_stats', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('guild_member_id')->unsigned()->index();
+            $table->integer('level')->unsigned();
             $table->integer('bricks_cnt')->unsigned();
             $table->integer('wood_cnt')->unsigned();
             $table->integer('ark_f')->unsigned();

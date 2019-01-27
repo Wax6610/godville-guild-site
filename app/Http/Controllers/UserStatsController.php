@@ -8,6 +8,7 @@ use App\UserStats;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Services\UserStatsService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -23,19 +24,31 @@ class UserStatsController extends Controller
     }
 
     public function index($start_date = null, $end_date = null){
-        $end_date = Carbon::today();
-        $start_date = Carbon::yesterday();
-        $start_stats = UserStats::whereDate('created_at',$start_date)->get();
-        $end_stats = UserStats::whereDate('created_at',$end_date)->get();
+        if (empty($start_date)) $start_date = Carbon::yesterday();
+        if (empty($end_date)) $end_date = Carbon :: today();
 
-        dump($start_stats);
-        dump($end_stats);
+
+        $progress = DB::table('user_stats as start')
+            ->join('user_stats as end', 'start.guild_member_id', '=', 'end.guild_member_id')
+            ->join('guild_members as user', 'start.guild_member_id', '=', 'user.id')
+            ->whereDate('start.created_at',$start_date)
+            ->whereDate('end.created_at',$end_date)
+            ->select( DB :: raw('end.bricks_cnt - start.bricks_cnt as bricks_cnt,
+                                        end.wood_cnt - start.wood_cnt as wood_cnt,
+                                        end.ark_f - start.ark_f as sark_f,
+                                        end.ark_m - start.ark_m as ark_m,
+                                        end.arena_won - start.arena_won as arena_won,
+                                        end.arena_lost - start.arena_lost as arena_lost,
+                                        end.savings - start.savings as savings,
+                                        end.level, user.name'))->get();
+
+        return json_encode($progress);
     }
 
     public function getSnapshot()
     {
         $users = GuildMember::doesntHave('todayStats')->get();
-
+        
         foreach ($users as $user) {
             try {
                 $user_stats = $this->service->getFromApi($user->name);
@@ -48,7 +61,7 @@ class UserStatsController extends Controller
             } catch (\Exception $e) {
                 Log::error("getSnapshotError: {$e->getMessage()}");
             }
-            sleep(60);
+           // sleep(60);
         }
 
     }

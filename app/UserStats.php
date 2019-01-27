@@ -38,7 +38,7 @@ class UserStats extends Model
 {
 
     protected $fillable = [
-        'guild_member_id', 'bricks_cnt', 'wood_cnt', 'ark_f', 'ark_m', 'arena_won', 'arena_lost', 'savings',
+        'guild_member_id', 'bricks_cnt', 'wood_cnt', 'ark_f', 'ark_m', 'arena_won', 'arena_lost', 'savings', 'level'
     ];
 
     public function guildMember()
