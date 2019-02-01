@@ -23,10 +23,9 @@ class UserStatsController extends Controller
         $this->service = $service;
     }
 
-    public function index($start_date = null, $end_date = null){
+    public function getProgress($start_date = null, $end_date = null){
         if (empty($start_date)) $start_date = Carbon::yesterday();
         if (empty($end_date)) $end_date = Carbon :: today();
-
 
         $progress = DB::table('user_stats as start')
             ->join('user_stats as end', 'start.guild_member_id', '=', 'end.guild_member_id')
@@ -35,7 +34,7 @@ class UserStatsController extends Controller
             ->whereDate('end.created_at',$end_date)
             ->select( DB :: raw('end.bricks_cnt - start.bricks_cnt as bricks_cnt,
                                         end.wood_cnt - start.wood_cnt as wood_cnt,
-                                        end.ark_f - start.ark_f as sark_f,
+                                        end.ark_f - start.ark_f as ark_f,
                                         end.ark_m - start.ark_m as ark_m,
                                         end.arena_won - start.arena_won as arena_won,
                                         end.arena_lost - start.arena_lost as arena_lost,
@@ -48,7 +47,7 @@ class UserStatsController extends Controller
     public function getSnapshot()
     {
         $users = GuildMember::doesntHave('todayStats')->get();
-        
+
         foreach ($users as $user) {
             try {
                 $user_stats = $this->service->getFromApi($user->name);
