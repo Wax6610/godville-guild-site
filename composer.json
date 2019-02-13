@@ -17,6 +17,7 @@
         "laravel/framework": "5.7.*",
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "^5.4.0",
+        "michaeldomo/php-proxy-list": " ~1.0.0",
         "wangaz/laravel-semantic-ui-css": "^1.3"
     },
     "require-dev": {

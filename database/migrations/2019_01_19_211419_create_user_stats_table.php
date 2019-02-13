@@ -18,6 +18,7 @@ class CreateUserStatsTable extends Migration
             $table->increments('id');
             $table->integer('guild_member_id')->unsigned()->index();
             $table->integer('level')->unsigned();
+            $table->string('clan_position')->index();
             $table->integer('bricks_cnt')->unsigned();
             $table->integer('wood_cnt')->unsigned();
             $table->integer('ark_f')->unsigned();
