@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\GuildMember;
+use App\Services\ProxyService;
 use Carbon\Carbon;
 use App\Services\UserStatsService;
 use App\Services\CustomFoxToolsAdapter;
@@ -16,9 +17,10 @@ class UserStatsController extends Controller
 {
     protected $guild_name = 'Драконы Годвилля';
 
-    public function __construct(UserStatsService $service )
+    public function __construct(UserStatsService $service, ProxyService $proxyService )
     {
         $this->service = $service;
+        $this->proxyService = $proxyService;
     }
 
     public function getProgress($start_date = null, $end_date = null)
@@ -45,27 +47,34 @@ class UserStatsController extends Controller
 
     public function getSnapshot()
     {
+        $users = GuildMember::doesntHave('todayStats')->inRandomOrder()->get();
+        $proxies = $this->proxyService->getProxyList();
 
         foreach ($users as $key => $user) {
             try {
+                $proxy = $proxies[$key % count($proxies)];
                 $user_stats = $this->service->getFromApi($user->name, $proxy);
 
                 if (empty($user_stats)){
-                    continue;
+                    dump("user_stats was empty:{$user->name} {$proxy}" );
+                    unset($proxies[$key % count($proxies)]);
+                    $proxies = array_values($proxies);
+                    die();
                 }
                 if ($user_stats->clan !== env("GUILD_NAME")) {
                     $user->delete();
                 } else {
                     $this->service->save($user->id, $user_stats);
-              
+                   dump($user->name);
                 }
           //      sleep(rand(5, 10));
             } catch (\Exception $e) {
                 echo $e->getMessage();
                 Log::error("getSnapshotError: {$e->getMessage()}");
             }
-            
-            sleep(rand(15));
+            $time = round(70/count($proxies));
+            echo $time ;
+            sleep(5);
         }
         dump ('DONE!!!!');
     }

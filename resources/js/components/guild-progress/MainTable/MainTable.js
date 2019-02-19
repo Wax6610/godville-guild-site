@@ -162,6 +162,11 @@ export default class MainTable extends PureComponent {
 
     };
 
+    handleRowClick (event, data)  {
+        console.log(event.target)
+        console.log(data)
+
+    }
     componentDidMount() {
         this.tableInit(this.props.rawData);
     }
@@ -182,12 +187,12 @@ export default class MainTable extends PureComponent {
 
         return (
             <Segment>
-                <Table sortable compact celled striped padded>
+                <Table sortable compact celled striped padded stackable>
                     <MainTableHeader column={column} direction={direction} handleSort={this.handleSort}
                                      handleSelectFilterChange={this.handleSelectFilterChange}
                                      handleInputFilterChange={this.handleInputFilterChange}/>
 
-                    <MainTableBody activePageData={activePageData} maxCellValues={maxCellValues}/>
+                    <MainTableBody activePageData={activePageData} maxCellValues={maxCellValues} handleRowClick={this.handleRowClick}/>
                 </Table>
                 <Pagination
                     onPageChange={this.handlePageChange}
@@ -259,7 +264,7 @@ const MainTableHeader = (props) => {
     </Table.Header>)
 }
 
-const MainTableBody = ({activePageData, maxCellValues}) => {
+const MainTableBody = ({activePageData, maxCellValues, handleRowClick}) => {
     return (
         <Table.Body>
             {activePageData.map(row => (
@@ -267,19 +272,19 @@ const MainTableBody = ({activePageData, maxCellValues}) => {
                     <Table.Cell>{row.name}</Table.Cell>
                     <Table.Cell>{row.level}</Table.Cell>
                     <Table.Cell>{row.clan_position}</Table.Cell>
-                    <Table.Cell><Progress progress='value' color='orange' value={row.bricks_cnt}
-                                          total={maxCellValues.bricks_cnt}/></Table.Cell>
-                    <Table.Cell><Progress progress='value' color='green' value={row.wood_cnt}
+                    <Table.Cell><Progress progress='value' text="Кирпичи" color='orange' value={row.bricks_cnt}
+                                          total={maxCellValues.bricks_cnt} onClick={(this) => {console.log(this.color)}}/></Table.Cell>
+                    <Table.Cell><Progress progress='value' text="Кирпичи" color='green' value={row.wood_cnt}
                                           total={maxCellValues.wood_cnt}/></Table.Cell>
-                    <Table.Cell><Progress progress='value' color='yellow' value={row.savings}
+                    <Table.Cell><Progress progress='value' text="Кирпичи" color='yellow' value={row.savings}
                                           total={maxCellValues.savings}/></Table.Cell>
-                    <Table.Cell><Progress progress='value' color='red' value={row.arena_won}
+                    <Table.Cell><Progress progress='value' text="Кирпичи" color='red' value={row.arena_won}
                                           total={maxCellValues.arena_won}/></Table.Cell>
-                    <Table.Cell><Progress progress='value' value={row.arena_lost}
+                    <Table.Cell><Progress progress='value' text="Кирпичи" value={row.arena_lost}
                                           total={maxCellValues.arena_lost}/></Table.Cell>
-                    <Table.Cell><Progress progress='value' color='blue' value={row.ark_m}
+                    <Table.Cell><Progress progress='value' text="Кирпичи" color='blue' value={row.ark_m}
                                           total={maxCellValues.ark_m}/></Table.Cell>
-                    <Table.Cell><Progress progress='value' color='pink' value={row.ark_f}
+                    <Table.Cell><Progress progress='value' text="Кирпичи" color='pink' value={row.ark_f}
                                           total={maxCellValues.ark_f}/></Table.Cell>
                 </Table.Row>
             ))}
