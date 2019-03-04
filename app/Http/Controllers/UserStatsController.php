@@ -6,7 +6,6 @@ use App\GuildMember;
 use App\Services\ProxyService;
 use Carbon\Carbon;
 use App\Services\UserStatsService;
-use App\Services\CustomFoxToolsAdapter;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -47,35 +46,61 @@ class UserStatsController extends Controller
 
     public function getSnapshot()
     {
-        $users = GuildMember::doesntHave('todayStats')->inRandomOrder()->get();
-        $proxies = $this->proxyService->getProxyList();
+        $users = GuildMember::where('bad_attempts', '<', 10)->doesntHave('todayStats')->inRandomOrder()->limit(15)->get();
+			$count = GuildMember::where('bad_attempts', '<', 5)->doesntHave('todayStats')->count();
+	  Log::info("'getSnapshot: started need to done : {$count}");	
+
+        $proxies = $this->proxyService->getList();
 
         foreach ($users as $key => $user) {
             try {
-                $proxy = $proxies[$key % count($proxies)];
+                /* Если нет прокси выходим*/
+                if (empty($proxies)){
+                    Log::error('getSnapshotError: $proxies is empty');
+                    return;
+                }
+                $currentProxy = null;
+
+                /* Ищем живой прокси */
+                foreach ($proxies as $key => $proxy){
+                    unset($proxies[$key]);
+                    if ($this->proxyService->isAlive($proxy)){
+                        $currentProxy = $proxy;
+	                $this->proxyService->removeBadAttempt($proxy);
+                        break ;
+                    }
+		    $this->proxyService->addBadAttempt($proxy);			
+                }
+                if ($currentProxy === null)
+                    return;
+
+                /*Собираем данные*/
                 $user_stats = $this->service->getFromApi($user->name, $proxy);
 
+                /* Если данных нет увеличиваем счетчик неудачных попыток для бога и прокси*/
                 if (empty($user_stats)){
-                    dump("user_stats was empty:{$user->name} {$proxy}" );
-                    unset($proxies[$key % count($proxies)]);
-                    $proxies = array_values($proxies);
-                    die();
+                    Log::critical("getSnapshot: {$user->name} stats is empty");
+
+                    $user->increment('bad_attempts', 1);
+		            sleep(5);
+                    continue;
                 }
+
+
                 if ($user_stats->clan !== env("GUILD_NAME")) {
                     $user->delete();
                 } else {
                     $this->service->save($user->id, $user_stats);
-                   dump($user->name);
+                    Log::info("'getSnapshot: added : {$user->name} ");
                 }
-          //      sleep(rand(5, 10));
+                sleep(5);
+
             } catch (\Exception $e) {
                 echo $e->getMessage();
                 Log::error("getSnapshotError: {$e->getMessage()}");
             }
-            $time = round(70/count($proxies));
-            echo $time ;
-            sleep(5);
         }
-        dump ('DONE!!!!');
+	 Log::info("'getSnapshot: done");	
+    return;
     }
 }

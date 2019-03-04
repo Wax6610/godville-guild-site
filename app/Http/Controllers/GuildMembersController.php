@@ -37,7 +37,7 @@ class GuildMembersController extends Controller
             return view('guild-members.parse',compact('added'));
         }
 
-        return view('guild-members.parse',compact('added'));
+        return view('guild-members.parse');
 
     }
 }

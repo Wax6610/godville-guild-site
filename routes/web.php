@@ -25,7 +25,11 @@ Route::post('/add-from-guild-page','GuildMembersController@parse')->name('add-fr
 Route::get('/get-snapshot','UserStatsController@getSnapshot');
 Route::get('/get-progress/{start?}/{end?}','UserStatsController@getProgress')->name('get-progress');
 
-Route::get('/guild-progress', function () {
+Route::resource('proxy','ProxyController');
+
+
+
+Route::get('/clan-progress', function () {
     return view('guild-progress');
 });
 

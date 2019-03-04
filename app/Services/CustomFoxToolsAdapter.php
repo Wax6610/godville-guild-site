@@ -23,7 +23,7 @@ class CustomFoxToolsAdapter extends \michaeldomo\proxylist\BaseProxyList
      * @var string
      */
 
-    private $_url = 'http://api.foxtools.ru/v2/Proxy?uptime=1&anonymity=HighKeepAlive&anonymity=High&type=HTTPS&available=Yes&free=Yes';
+    private $_url = 'http://api.foxtools.ru/v2/Proxy?uptime=1000&anonymity=HighKeepAlive&anonymity=High&type=HTTPS&available=Yes&free=Yes';
 
     /**
      * Json list of proxies

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateGuildMembersTable extends Migration
+class CreateProxyTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,13 @@ class CreateGuildMembersTable extends Migration
      */
     public function up()
     {
-        Schema::create('guild_members', function (Blueprint $table) {
+        Schema::create('proxy', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name')->unique();
-            $table->integer('bad_attempts')->default(0);
+            $table->string("ip");
+            $table->integer("port")->unsigned();
+            $table->integer('bad_attempts')->default(0)->index();
+            $table->timestamps();
+            $table->unique(['ip', 'port']);
         });
     }
 
@@ -27,6 +30,6 @@ class CreateGuildMembersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('guild_members');
+        Schema::dropIfExists('proxy');
     }
 }

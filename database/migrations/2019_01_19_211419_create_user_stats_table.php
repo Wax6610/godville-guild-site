@@ -18,7 +18,7 @@ class CreateUserStatsTable extends Migration
             $table->increments('id');
             $table->integer('guild_member_id')->unsigned()->index();
             $table->integer('level')->unsigned();
-            $table->string('clan_position')->index();
+            $table->string('clan_position');
             $table->integer('bricks_cnt')->unsigned();
             $table->integer('wood_cnt')->unsigned();
             $table->integer('ark_f')->unsigned();
@@ -28,6 +28,8 @@ class CreateUserStatsTable extends Migration
             $table->integer('savings')->unsigned();
             $table->timestamps();
             $table->foreign('guild_member_id')->references('id')->on('guild_members')->onDelete('cascade');
+            $table->index(['created_at']);
+            $table->unique(['guild_member_id', 'created_at']);
         });
     }
 

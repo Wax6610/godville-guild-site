@@ -9,41 +9,65 @@
 namespace App\Services;
 
 
+use App\Proxy;
+use Carbon\Carbon;
+
 class ProxyService
 {
-    function getProxyList(): array {
-        return ['45.6.100.250:38320',
-            '217.79.178.91:3128',
-            '191.252.110.226:80',
-            '80.211.6.167:3128',
-            '188.170.122.156:8080',
-            '188.165.164.9:3128',
-            '178.62.210.107	:8080',
-            '61.7.185.196:8080',
-            '92.222.51.56:3128',
-            '103.14.232.22:8080',
-            '47.90.87.78:3128',
-            '178.217.140.70	:443',
-            '34.233.87.146:3128',
-            '159.65.133.43:8080',
-            '182.253.152.124:8080',
-            '110.74.221.31:55467',
-            '68.183.183.3:8080',
-            '194.67.37.90:3128',
-            '122.252.235.122:8080',
-            '5.135.164.72:3128',
-            '52.53.232.160:80',
-            '45.32.60.155:443',
-            '107.170.248.119:31280',
-            '46.151.108.6:33727',
-            '107.170.248.129:31280',
-            '66.181.167.88:53281',
-            '181.129.140.226:45243',
-            '41.90.162.162:50101',
-            '188.186.186.146:45121',
-            '36.80.36.57:46210',
-            '131.255.118.30:53281',
-            '180.250.219.58:53281'
-        ];
+    function getList(): object {
+        $last_used = Carbon::now()->subMinutes(5);
+        return Proxy::whereTime('updated_at', '<' ,$last_used)->orderBy('bad_attempts','asc')->get();
     }
+
+    function isAlive(Proxy $proxy) : bool
+    {
+        $url = 'https://api.ipify.org?format=json';
+        $data = DataService::getData($url, $proxy);
+        if($data === null)
+            return false;
+        return true;
+
+    }
+
+    function create ($data): object {
+        return Proxy::create([
+            'ip' => $data['ip']
+            ,'port' => $data['port']
+        ]);
+    }
+
+    function addBadAttempt(Proxy $proxy){
+        $proxy->increment('bad_attempts', 1);
+    }
+
+    function removeBadAttempt(Proxy $proxy){
+        $proxy->decrement('bad_attempts', 1);
+    }
+
+    //getproxylist
+    function addFromGetProxyList () : ?object {
+        $baseUrl = 'https://api.getproxylist.com/proxy';
+        $lastTested = 'lastTested=600';
+        $anonymity = 'anonymity=high%20anonymity';
+        $allowsUserAgentHeader = 'allowsUserAgentHeader=1';
+        $allowsHttps = 'allowsHttps=1';
+        $minUptime = 'minUptime=70';
+
+        $url = "{$baseUrl}?{$anonymity}&{$allowsUserAgentHeader}&{$allowsHttps}&{$minUptime}";
+        return DataService::getData($url);
+    }
+
+    function  addFromPubProxy () : ?object {
+        $baseUrl = 'http://pubproxy.com/api/proxy';
+        $format = 'format=json' ;
+        $anonymity = 'level=anonymous';
+        $lastTested = 'last_check=10';
+        $limit = 'limit=20';
+        $allowsHttps = 'https=true';
+        $allowsUserAgentHeader = 'user_agent=true';
+
+        $url = "{$baseUrl}?{$format}&{$lastTested}&{$anonymity}&{$allowsUserAgentHeader}&{$allowsHttps}&{$limit}";
+        return DataService::getData($url);
+    }
+
 }

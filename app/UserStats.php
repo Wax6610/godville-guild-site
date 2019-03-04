@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 /**
  * App\UserStats
@@ -44,5 +45,15 @@ class UserStats extends Model
     public function guildMember()
     {
         return $this->belongsTo('App\GuildMember');
+    }
+
+    public function setCreatedAtAttribute()
+    {
+        $this->attributes['created_at'] = Carbon::now()->toDateString();
+    }
+
+    public function setUpdatedAtAttribute()
+    {
+
     }
 }
