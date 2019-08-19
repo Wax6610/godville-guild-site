@@ -21,6 +21,8 @@ class DataService
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_USERAGENT, $agent);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+
 
         if($proxy){
             curl_setopt($ch, CURLOPT_PROXY, $proxy->ip);

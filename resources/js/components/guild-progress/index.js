@@ -1,8 +1,10 @@
-import React  from 'react';
-import ReactDOM from 'react-dom';
-import App from "./App";
+import React from "react";
+import ReactDOM from "react-dom";
+import MainApp from "./MainApp";
 
-
-if (document.getElementById('guild-progress-table')) {
-    ReactDOM.render(<App />, document.getElementById('guild-progress-table'));
+if (document.getElementById("guild-progress-table")) {
+    ReactDOM.render(
+        <MainApp />,
+        document.getElementById("guild-progress-table")
+    );
 }

@@ -15,8 +15,8 @@ use Carbon\Carbon;
 class ProxyService
 {
     function getList(): object {
-        $last_used = Carbon::now()->subMinutes(5);
-        return Proxy::whereTime('updated_at', '<' ,$last_used)->orderBy('bad_attempts','asc')->get();
+        $last_used = Carbon::now()->subMinutes(4);
+        return Proxy::whereTime('updated_at', '<' ,$last_used)->where('bad_attempts', '<=', 1)->orderBy('bad_attempts', 'asc')->limit(50)->get();
     }
 
     function isAlive(Proxy $proxy) : bool

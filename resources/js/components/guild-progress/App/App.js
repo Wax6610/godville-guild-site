@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react'
 import DateRangeFilter from '../DateRangeFilter'
-import {Divider, Loader, Segment, Dimmer, Button, Container, Responsive} from 'semantic-ui-react'
+import {Divider, Loader, Segment, Dimmer, Button, Container} from 'semantic-ui-react'
 import MainTable from '../MainTable'
 import moment from 'moment'
 import axios from 'axios'
@@ -11,8 +11,8 @@ export default class App extends PureComponent {
         loading: true,
         error: false,
         isSearchDisabled: false,
-        startDate: moment().add(-1, 'd'),
-        endDate: moment(),
+        startDate: moment().add(-2, 'd'),
+        endDate: moment().add(-1, 'd'),
         data: []
     }
 
@@ -50,8 +50,7 @@ export default class App extends PureComponent {
         let dataComponent = data.length > 0 ? <MainTable rawData={data}/> : <EmptyData/>
         dataComponent =  error === true ? <Error/> : dataComponent
         return (
-        <Segment.Group>
-            <Responsive as={Segment}>
+            <React.Fragment>
                 <Segment vertical>
                     <DateRangeFilter startDate={startDate} endDate={endDate} onClose={this.handleDateClose}/>
                 </Segment>
@@ -60,8 +59,7 @@ export default class App extends PureComponent {
                             onClick={this.loadData}>Поиск</Button>
                 </Segment>
                 {loading === true ? <Loading/> : dataComponent}
-            </Responsive>
-        </Segment.Group>
+            </React.Fragment>
         )
     }
 }

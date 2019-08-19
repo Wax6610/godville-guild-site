@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Laravel</title>
+    <title>Драконы Годвилля. Таблица прогресса гильдии</title>
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet" type="text/css">
     <link
@@ -17,7 +17,6 @@
 </head>
 <body>
 <div class="ui container">
-    <h1>Статистика прогресса гильдии</h1>
     <div clas="row">
         <div id="guild-progress-table" class="row"></div>
     </div>

@@ -1,0 +1,25 @@
+.navigation {
+    list-style-type: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.navigation__item {
+    margin-right: 20px;
+    color: #636b6f;
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 0.1rem;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+.navigation__item:hover {
+    cursor: pointer;
+    color: black;
+}
+
+.navigation__item--active {
+    border-bottom: 1px black solid;
+}
